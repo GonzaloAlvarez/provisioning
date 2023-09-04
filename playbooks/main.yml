@@ -46,7 +46,6 @@
     - { role: geerlingguy.pip, become: true, pip_package: python3-pip }
     - { role: geerlingguy.ansible, become: true}
     - { role: secfigo.terraform, become: true }
-    - { role: infra, become: false}
 
 - hosts: baremetal
   roles:
