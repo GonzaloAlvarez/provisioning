@@ -31,10 +31,6 @@
   roles:
     - { role: proxmox-vm, become: true }
 
-- hosts: aws_vm
-  roles:
-    - { role: aws_vm, become: true }
-
 - hosts: trusted
   roles:
     - { role: privatekeys, become: false }
