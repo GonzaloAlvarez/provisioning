@@ -17,5 +17,8 @@ pip install ansible
 pip install dulwich --config-settings "--build-option=--pure"
 $PYTHON - <<'____HERE'
 from dulwich import porcelain
-porcelain.clone('https://github.com/GonzaloAlvarez/infra', 'infra')
+porcelain.clone('https://github.com/GonzaloAlvarez/provisioning', 'provisioning')
 ____HERE
+cd provisioning
+ansible-galaxy install -r requirements.yml
+ansible-playbook --connection=local --inventory=localhost --limit 127.0.0.1 playbooks/main.yml
