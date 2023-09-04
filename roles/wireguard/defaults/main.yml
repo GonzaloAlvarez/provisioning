@@ -1,0 +1,19 @@
+---
+wireguard_port: "5888"
+wireguard_path: "/etc/wireguard"
+
+wireguard_network_name: "private"
+
+debian_enable_backports: true
+debian_pin_packages: true
+
+client_vpn_ip: ""
+client_wireguard_path: "~/wg.conf"
+
+wireguard_additional_peers: false
+wireguard_post_up: false
+wireguard_post_down: false
+
+wireguard_post_up: 'iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o {{ ansible_default_ipv4.interface }} -j MASQUERADE'
+wireguard_post_down: 'iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o {{ ansible_default_ipv4.interface }} -j MASQUERADE'
+

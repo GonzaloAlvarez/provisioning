@@ -1,0 +1,27 @@
+---
+- name: Reboot box to allow the DHCP to get the right IP
+  reboot:
+  tags: molecule-notest
+
+- block:
+
+  - name: Change ansible_host on inventory file
+    local_action: 'command {{ inventory_file }} --batch "edit var ansible_host new_value={{ provided_hostname }}.{{ provided_domain }} in_hosts={{ provided_hostname }}"'
+    become: False
+
+  - name: Change username on inventory file
+    local_action: 'command {{ inventory_file }} --batch "edit var ansible_user new_value={{ ansible_user }} in_hosts={{ provided_hostname }}"'
+    become: False
+
+  - name: Delete keyfile var from inventory file
+    local_action: 'command {{ inventory_file }} --batch "del var ansible_ssh_private_key_file from_hosts={{ provided_hostname }}"'
+    become: False
+
+  - name: Remove proxmox-vm from groups
+    local_action: 'command {{ inventory_file }} --batch "del host {{ provided_hostname }} from_groups=proxmox-vm"'
+    become: False
+
+  - meta: refresh_inventory
+
+  when: '"dynamicinventory" in inventory_file'
+

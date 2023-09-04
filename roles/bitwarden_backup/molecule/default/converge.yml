@@ -1,0 +1,34 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - debug:
+        msg: >-
+          Testing with Ansible
+          {{ ansible_version.full }} using Python
+          {{ ansible_facts.python_version }}
+          on {{ ansible_facts.distribution }}
+          {{ ansible_facts.distribution_version }}
+
+    - name: Include vars
+      include_vars:
+        file: '../../defaults/main.yml'
+
+    - file:
+        path: '{{ bitwarden_db_path | dirname }}'
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+      changed_when: false
+
+    - file:
+        path: '{{ bitwarden_db_path }}'
+        state: touch
+        owner: root
+        group: root
+        mode: 0644
+      changed_when: false
+
+    - import_role:
+        name: bitwarden_backup

@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  role_name: mac_bootstrap
+  namespace: mac_bootstrap
+  author: 'Gonzalo Alvarez'
+  description: Mac Bootstrapping to install a bunch of software
+  company: 'Gonzalo Alvarez'
+  license: 'Apache 2.0'
+  min_ansible_version: '2.7'
+
+  platforms:
+    - name: Debian
+      versions:
+        - 1-
+
+  galaxy_tags:
+    - system
+
+dependencies: []

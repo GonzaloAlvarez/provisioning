@@ -1,0 +1,18 @@
+---
+- hosts: osx
+  roles:
+    - { role: xcode }
+    - { role: homebrew }
+      #    - { role: users, become: True }
+    - { role: mac_bootstrap }
+    - { role: dotfiles, become: false }
+    - { role: macdock }
+
+- hosts: trusted
+  roles:
+    - { role: privatekeys, become: false }
+ 
+- hosts: osx
+  tasks:
+    - name: Install dotfiles with belt and suspenders
+      shell: "( ( nohup /bin/bash -c {{ ansible_env.HOME }}/.dotfiles/build.sh {{ inventory_hostname }} < /dev/null 1>/dev/null 2>&1 >/dev/null ) &)"

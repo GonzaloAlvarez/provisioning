@@ -1,0 +1,10 @@
+---
+- name: Install favourite homebrew packages
+  homebrew:
+    name: "{{ homebrew_install_packages }}"
+    state: present
+
+- name: Install favourite brew cask packages
+  homebrew_cask:
+    name: "{{ homebrew_cask_install_packages }}"
+    state: present

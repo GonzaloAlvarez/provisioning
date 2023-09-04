@@ -1,0 +1,40 @@
+---
+# Timezone
+dbs_timezone: "US/Pacific"
+
+# Uninstall unneeded packages
+dbs_uninstall_packages:
+  - at
+  - exim4
+  - exim4-base
+  - mutt
+  - exim4-config
+  - exim4-daemon-light
+  - apache2 
+  - apache2-bin 
+  - apache2-data 
+  - apache2-utils
+
+# Configure hostname
+dbs_hostname: "{{ provided_hostname | default(ansible_host) }}"
+
+# Ensure it is python 3
+pip_package: python3-pip
+
+# Pip Packages to install
+pip_install_packages: []
+
+# Cockpit systems to install [default, minimal, full]
+cockpit_packages: full
+
+# nginx
+nginx_revproxy_sites:
+  default:
+    ssl: false
+    letsencrypt: false
+
+# basepath for infrastructure content
+infra_basepath: "{{ inventory_dir }}/.."
+ssl_basepath: "{{ infra_basepath }}/security"
+
+rust_user: gonzalo

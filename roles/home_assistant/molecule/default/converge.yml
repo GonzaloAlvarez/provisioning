@@ -1,0 +1,19 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - debug:
+        msg: >-
+          Testing with Ansible
+          {{ ansible_version.full }} using Python
+          {{ ansible_facts.python_version }}
+          on {{ ansible_facts.distribution }}
+          {{ ansible_facts.distribution_version }}
+
+    - name: update cache
+      apt:
+        update_cache: true
+    - import_role:
+        name: python
+    - import_role:
+        name: home_assistant

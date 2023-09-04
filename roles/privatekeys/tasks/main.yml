@@ -1,0 +1,55 @@
+---
+- name: Gather facts
+  setup:
+
+- name: Add personal private SSH key to system
+  copy:
+    content: "{{ ssh_private_key }}"
+    dest: "{{ ansible_env.HOME }}/.ssh/main_private_key.pem"
+    mode: "600"
+  when: trust_system == true
+
+- name: Add GitHub private SSH key to system
+  copy:
+    content: "{{ github_ssh_private_key }}"
+    dest: "{{ ansible_env.HOME }}/.ssh/github_ssh_private_key.pem"
+    mode: "600"
+  when: trust_system == true
+
+- name: Add config for github
+  ssh_config:
+    host: 'github.com'
+    user: '{{ ansible_user }}'
+    identity_file: '~/.ssh/github_ssh_private_key.pem'
+    state: 'present'
+
+- name: Add config for lan
+  ssh_config:
+    host: '*.lan'
+    user: '{{ ansible_user }}'
+    remote_user: 'gonzalo'
+    identity_file: '~/.ssh/main_private_key.pem'
+    state: 'present'
+
+- name: Add config for password
+  ssh_config:
+    host: 'passwords'
+    user: '{{ ansible_user }}'
+    remote_user: 'gonzalo'
+    hostname: 'passwords.lan'
+    identity_file: '~/.ssh/main_private_key.pem'
+    state: 'present'
+
+- name: Update dotfiles repo
+  git:
+    repo: "git@github.com:GonzaloAlvarez/dotfiles.git"
+    dest: "{{ ansible_env.HOME }}/.dotfiles"
+    update: false
+
+- name: Download gear repo
+  git:
+    repo: 'git@github.com:GonzaloAlvarez/gear.git'
+    dest: '{{ ansible_env.HOME }}/.gear'
+    update: false
+
+

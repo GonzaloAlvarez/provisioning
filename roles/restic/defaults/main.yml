@@ -1,0 +1,12 @@
+---
+restic_version: '0.12.0'
+restic_url: ''
+restic_dir_owner: 'root'
+restic_dir_group: 'root'
+restic_download_path: '/opt/restic'
+
+restic_install_path: '/usr/local/bin'
+restic_create_paths:
+    - '/var/log/restic'
+    - '{{ restic_install_path }}'
+    - '{{ restic_download_path }}'

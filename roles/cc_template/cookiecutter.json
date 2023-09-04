@@ -1,0 +1,5 @@
+{
+    "role_title": "My Awesome Role",
+    "role_name": "{{ cookiecutter.role_title | lower | replace(' ','_') }}",
+    "short_description": "Description"
+}

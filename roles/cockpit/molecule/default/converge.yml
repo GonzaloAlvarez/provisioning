@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  become: True
+  tasks:
+    - name: "Include cockpit"
+      include_role:
+        name: "cockpit"

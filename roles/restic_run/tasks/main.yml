@@ -1,0 +1,66 @@
+---
+- name: Check that the backup folder exits
+  stat:
+    path: '{{ backup_folder }}'
+  register: bfolder
+  failed_when: not bfolder.stat.exists
+
+- name: Build tag arguments
+  set_fact:
+    tags_args: "{{ ['--tag', item ] }}"
+  loop: "{{ backup_tags }}"
+
+- name: Build exclude arguments
+  set_fact:
+    exclude_args: "{{ ['--exclude', item ] }}"
+  loop: "{{ backup_excludes }}"
+
+- name: Build the enviornment variables
+  set_fact:
+    backup_env:
+      RESTIC_REPOSITORY: "{{ 's3:https://s3.amazonaws.com/' \
+                          + backup_repository }}"
+      RESTIC_PASSWORD: "{{ backup_password | default('') }}"
+      AWS_ACCESS_KEY_ID: "{{ backup_aws_access_key | default('') }}"
+      AWS_SECRET_ACCESS_KEY: "{{ backup_aws_secret_key | default('') }}"
+      AWS_DEFAULT_REGION: "{{ backup_aws_region | default('us-east-1') }}"
+
+- name: Check if there are any snapshots
+  command:
+    argv: "\
+           {{ [ 'restic',\
+           'snapshots' ]}}"
+  environment: "{{ backup_env }}"
+  ignore_errors: true
+  tags: 
+   - notest
+  register: snapshots_output
+
+- name: Initialize the repository if it doesnt exist
+  command:
+    argv: "{{\
+           [ 'restic',\
+           'init']}}"
+  environment: "{{ backup_env }}"
+  tags:
+    - notest
+  when: snapshots_output.rc > 0
+
+- name: Create the backup
+  command:
+    argv: "\
+           {{ [ 'restic', 'backup', \
+           backup_folder, '--host', backup_hostname ] \
+           + tags_args | default([]) + exclude_args | \
+           default([]) }}"
+  environment: "{{ backup_env }}"
+  tags:
+    - notest
+  ignore_errors: true
+
+- name: Check Restic backups
+  command: 'restic check'
+  environment: '{{ backup_env }}'
+  tags:
+    - notest
+  changed_when: false

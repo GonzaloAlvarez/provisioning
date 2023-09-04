@@ -1,0 +1,46 @@
+---
+- name: Check if Xcode is installed
+  command: xcode-select -p
+  register: xcode_app
+  changed_when: false
+  ignore_errors: yes
+
+
+- name: Install XCode
+  block:
+    - name: Important Message
+      debug:
+        msg:
+          - '-------------------------------------------'
+          - '|   PLEASE, ACCEPT ACCESS ON REMOTE MAC   |'
+          - '-------------------------------------------'
+          
+    - name: Copy access script
+      copy:
+        src: 'access-script.sh'
+        dest: '/Users/{{ ansible_user }}/access-script.sh'
+        mode: '0755'
+
+    - name: Run script
+      shell:
+        cmd: '/Users/{{ ansible_user }}/access-script.sh'
+
+    - name: Copy installationscript
+      copy:
+        src: 'install-script.sh'
+        dest: '/Users/{{ ansible_user }}/install-script.sh'
+        mode: '0755'
+
+    - name: Run script
+      shell:
+        cmd: '/Users/{{ ansible_user }}/install-script.sh'
+
+    - name: Remove scripts
+      file:
+        path: '{{ item }}'
+        state: absent
+      with_items:
+        - '/Users/{{ ansible_user }}/install-script.sh'
+        - '/Users/{{ ansible_user }}/access-script.sh'
+  
+  when: xcode_app.rc > 0

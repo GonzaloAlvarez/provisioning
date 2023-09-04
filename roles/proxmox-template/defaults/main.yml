@@ -1,0 +1,9 @@
+---
+template_id: 9000
+template_url: 'https://cloud.debian.org/images/cloud/bullseye/latest/debian-11-generic-amd64.qcow2'
+template_name: 'debian-11-cloudinit'
+template_memory: 2048
+template_netbridge: 'vmbr0'
+template_storage: 'local-lvm'
+sshkey_url: 'https://raw.githubusercontent.com/GonzaloAlvarez/credentials/master/SSH/GonzaloAlvarez-MasterSSH-pubkey.pem'
+

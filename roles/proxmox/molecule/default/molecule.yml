@@ -1,0 +1,22 @@
+---
+dependency:
+  name: galaxy
+  options:
+    role-file: molecule/default/requirements.yml
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+  flake8
+platforms:
+  - name: users-mol-tests
+    box: essimages/proxmox-ve
+    box_version: "5.4"
+provisioner:
+  name: ansible
+verifier:
+  name: ansible

@@ -1,0 +1,76 @@
+---
+- name: Remove previous keypair
+  local_action: "file path=/tmp/id_ssh_rsa state=absent force=yes"
+  become: False
+  changed_when: False
+
+- name: Remove previous keypair
+  local_action: "file path=/tmp/id_ssh_rsa.pub state=absent force=yes"
+  become: False
+  changed_when: False
+
+- name: Generate keypair
+  local_action: "openssh_keypair path=/tmp/id_ssh_rsa force=yes"
+  register: key
+  become: False
+
+- name: Copy authorized key
+  authorized_key:
+    user: "{{ ansible_user }}"
+    state: "present"
+    key: "{{ key.public_key }}"
+
+- name: Nuke enterprise repo
+  local_action: "command ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=3 -l {{ ansible_user }} -i {{ key.filename }} {{ ansible_host }} 'rm -f /etc/apt/sources.list.d/pve-enterprise.list'"
+  register: test_user
+  become: False
+  ignore_errors: true
+  changed_when: false
+
+- name: Remove authorized key
+  authorized_key:
+    user: "{{ ansible_user }}"
+    state: "absent"
+    key: "{{ key.public_key }}"
+
+- name: Remove keypair
+  local_action: "file path=/tmp/id_ssh_rsa state=absent force=yes"
+  become: False
+  changed_when: False
+
+- name: Remove keypair
+  local_action: "file path=/tmp/id_ssh_rsa.pub state=absent force=yes"
+  become: False
+  changed_when: False
+
+- block:
+  - name: Remove automatically installed PVE Enterprise repo configuration
+    apt_repository:
+      repo: "{{ item }}"
+      filename: pve-enterprise
+      state: absent
+    with_items:
+      - "deb https://enterprise.proxmox.com/debian {{ ansible_distribution_release }} pve-enterprise"
+      - "deb https://enterprise.proxmox.com/debian/pve {{ ansible_distribution_release }} pve-enterprise"
+
+  - name: Remove subscription check wrapper function in web UI
+    patch:
+      src: "00_remove_checked_command_{{ ansible_distribution_release }}.patch"
+      basedir: /
+      strip: 1
+      backup: yes
+    ignore_errors: true
+    when:
+      - "pve_remove_subscription_warning | bool"
+
+  when:
+    - "'pve-no-subscription' in pve_repository_line"
+
+- name: Add Proxmox repository
+  apt_repository:
+    repo: "{{ pve_repository_line }}"
+    filename: proxmox
+    state: present
+  register: _pve_repo
+
+

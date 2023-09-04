@@ -1,0 +1,8 @@
+---
+backup_folder: '/opt/backup'
+backup_tags:
+  - 'home'
+backup_hostname: '{{ ansible_host }}'
+backup_excludes:
+  - '.git'
+backup_repository: 'restic'

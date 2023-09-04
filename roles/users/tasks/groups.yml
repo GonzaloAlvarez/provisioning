@@ -1,0 +1,6 @@
+---
+- name: "Make sure there is a {{ item }} group"
+  group:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ user_groups }}"

@@ -1,0 +1,20 @@
+---
+- name: Create directory if it doesnt exist
+  file:
+    path: '{{ cert_alt_path }}'
+    state: directory
+    mode: '0755'
+
+- name: Copy certificate file
+  copy:
+    src: "/etc/ssl/certs/ssl-cert-{{ ansible_host }}.crt"
+    dest: "{{ cert_alt_path }}/ssl-cert.crt"
+    remote_src: yes
+    mode: '0600'
+
+- name: Copy key file
+  copy:
+    src: "/etc/ssl/private/ssl-cert-{{ ansible_host }}.key"
+    dest: "{{ cert_alt_path }}/ssl-privatekey.key"
+    remote_src: yes
+    mode: '0600'

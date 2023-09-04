@@ -1,0 +1,5 @@
+---
+- name: Install dev packages
+  apt:
+    name: "{{ devtools_packages }}"
+    state: latest

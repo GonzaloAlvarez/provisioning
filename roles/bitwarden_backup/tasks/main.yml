@@ -1,0 +1,62 @@
+---
+- name: Make sure SQLite3 is installed
+  apt:
+    name: 'sqlite3'
+    state: 'latest'
+    update_cache: true
+
+- name: Check if the bitwarden file exits
+  stat:
+    path: '{{ bitwarden_db_path }}'
+  register: bitwarden_dbfile
+- name: Assert if bw dbfile exists
+  fail:
+    msg: 'No bitwarden file [{{ bitwarde_db_path }}] present'
+  when: not bitwarden_dbfile.stat.exists
+
+- name: Create the backup folder
+  file:
+    path: '{{ backup_folder }}/bitwarden'
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+
+- name: Define the backup file name
+  set_fact:
+    backup_file: "\
+      {{ backup_folder }}/bitwarden/bwrs-backup-\
+      {{ ansible_date_time.date }}-{{ ansible_date_time.hour }}.sql3"
+
+- name: Create the backup file
+  command:
+    argv:
+      - 'sqlite3'
+      - '{{ bitwarden_db_path }}'
+      - '.backup {{ backup_file }}'
+    creates: '{{ backup_file }}'
+
+- name: Find old files
+  find:
+    paths: '{{ backup_folder }}/bitwarden'
+    recurse: false
+  register: backupfiles
+
+- name: Register files as list
+  set_fact:
+    backup_file_list: "\
+                       {{ backupfiles.files \
+                       | sort(attribute='mtime') \
+                       | map(attribute='path') \
+                       | list }}"
+
+- name: Show files to be deleted
+  debug:
+    var: item
+  loop: '{{ backup_file_list[0:-3] }}'
+
+- name: Delete old files
+  file:
+    state: absent
+    path: '{{ item }}'
+  loop: '{{ backup_file_list[0:-3] }}'

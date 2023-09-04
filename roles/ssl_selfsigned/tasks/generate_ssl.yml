@@ -1,0 +1,32 @@
+---
+- name: Install python pyopenssl
+  pip:
+    name:
+      - cryptography
+      - PyOpenSSL
+    executable: '/usr/local/bin/pip3.10'
+    state: present
+
+- name: Change python version
+  set_fact:
+    ansible_python_interpreter: '/usr/local/bin/python3.10'
+
+- name: Generate an OpenSSL private key.
+  openssl_privatekey:
+    path: "/etc/ssl/private/ssl-cert-{{ ansible_host }}.key"
+
+- name: Generate an OpenSSL CSR.
+  openssl_csr:
+    path: "/etc/ssl/certs/ssl-cert-{{ ansible_host }}.csr"
+    privatekey_path: "/etc/ssl/private/ssl-cert-{{ ansible_host }}.key"
+
+- name: Generate a Self Signed OpenSSL certificate
+  openssl_certificate:
+    path: "/etc/ssl/certs/ssl-cert-{{ ansible_host }}.crt"
+    privatekey_path: "/etc/ssl/private/ssl-cert-{{ ansible_host }}.key"
+    csr_path: "/etc/ssl/certs/ssl-cert-{{ ansible_host }}.csr"
+    provider: selfsigned
+
+- name: Change python version
+  set_fact:
+    ansible_python_interpreter: '/usr/bin/python3'

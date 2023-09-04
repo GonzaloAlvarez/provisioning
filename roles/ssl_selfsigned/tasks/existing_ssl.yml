@@ -1,0 +1,20 @@
+---
+- name: Include cert file var
+  include_vars:
+    file: "{{ host_cert_varfile }}"
+
+- name: Include Parent certificate file
+  include_vars:
+    file: "{{ ssl_basepath }}/lan.homelab.ca.yml"
+
+- name: Create private key
+  copy:
+    content: '{{ private_key }}'
+    dest: '/etc/ssl/private/ssl-cert-{{ ansible_host }}.key'
+    mode: '0600'
+
+- name: Create certificate file
+  copy:
+    content: '{{ certificate }}{{ ca_cert }}'
+    dest: "/etc/ssl/certs/ssl-cert-{{ ansible_host }}.crt"
+    mode: '0600'

@@ -1,0 +1,64 @@
+- name: Check if Xcode is installed
+  command: mdfind -onlyin /Applications "kMDItemCFBundleIdentifier == 'com.apple.dt.Xcode'"
+  register: xcode_app
+  changed_when: false
+
+- name: Register xcode_installed
+  set_fact:
+    xcode_installed: "{{ xcode_app.stdout.find('Xcode') != -1 }}"
+
+- name: Get Installed Xcode version
+  shell: xcodebuild -version | head -n1 | cut -d " " -f 2
+  register: xcode_app_output
+  when: xcode_installed
+  changed_when: false
+
+- name: Export Installed Xcode version
+  set_fact:
+    xcode_installed_version: "{{ xcode_app_output.stdout }}"
+  when: xcode_installed
+
+- name: Install Xcode
+  block:
+    - name: get the xcode xpi file
+      get_url:
+        url: "{{ xcode_xip_url }}"
+        dest: "{{ xcode_xip_location }}"
+
+    - name: check that the xcode archive is valid
+      command: >
+        pkgutil --check-signature {{ xcode_xip_location }} |
+        grep \"Status: signed Apple Software\"
+
+    - name: Clean up existing Xcode installation
+      file:
+        path: /Applications/Xcode.app
+        state: absent
+
+    - name: Install Xcode from XIP file Location
+      command: xip --expand {{ xcode_xip_location }}
+      args:
+        chdir: /Applications
+      poll: 5
+      async: "{{ xcode_xip_extraction_timeout }}" # Prevent SSH connections timing out waiting for extraction
+
+    - name: Accept License Agreement
+      command: "{{ xcode_build }} -license accept"
+      become: true
+
+    - name: Run Xcode first launch
+      command: "{{ xcode_build }} -runFirstLaunch"
+      become: true
+      when: xcode_major_version | int >= 9
+
+    - name: Remove XCode XPI file
+      file:
+        path: "{{ xcode_xip_localtion }}"
+        state: absent
+
+  when: not xcode_installed or xcode_installed_version is version(xcode_target_version, '!=')
+
+- name: Enable Developer Mode
+  developer_mode:
+    state: enable
+  become: true

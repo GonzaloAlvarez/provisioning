@@ -1,0 +1,2 @@
+---
+ufw_rules: [{ port: 22, rule: allow }, { port: 443, rule: allow}, { port: 80, rule: allow}]

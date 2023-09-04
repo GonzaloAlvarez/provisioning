@@ -1,0 +1,4 @@
+---
+- include: preparation.yml
+- include: installation.yml
+- include: systemd.yml

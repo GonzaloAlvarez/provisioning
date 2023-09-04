@@ -1,0 +1,10 @@
+---
+- name: Include xcode-cli
+  include_tasks:
+    file: xcode-cli.yml
+  when: xcode_cli_only
+
+- name: Include xcode-full
+  include_tasks:
+    file: xcode-full.yml
+  when: not xcode_cli_only

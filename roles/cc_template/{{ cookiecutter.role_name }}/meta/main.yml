@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  role_name: {{ cookiecutter.role_name | lower | replace(' ', '_') }}
+  namespace: {{ cookiecutter.role_name | lower | replace(' ', '_') }}
+  author: 'Gonzalo Alvarez'
+  description: {{ cookiecutter.short_description }}
+  company: 'Gonzalo Alvarez'
+  license: 'Apache 2.0'
+  min_ansible_version: '2.7'
+
+  platforms:
+    - name: Debian
+      versions:
+        - 1-
+
+  galaxy_tags:
+    - system
+
+dependencies: []

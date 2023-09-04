@@ -1,0 +1,52 @@
+---
+- name: Check if template exists
+  command: "qm config {{ template_id }}"
+  register: config_result
+  ignore_errors: True
+  changed_when: False
+
+- name: Create template
+  block:
+    - name: Create temporary folder
+      tempfile:
+        state: "directory"
+      register: tempfolder
+
+    - name: Download image
+      get_url:
+        url: "{{ template_url }}"
+        dest: "{{ tempfolder.path }}/image.qcow2"
+
+    - name: Download ssh key
+      get_url:
+        url: "{{ sshkey_url }}"
+        dest: "{{ ansible_env.HOME }}/.ssh/vm-{{ template_id }}-sshkey.pub"
+
+    - name: Create vm
+      command: "qm create {{ template_id }} --name {{ template_name }} --memory {{ template_memory }} --net0 virtio,bridge={{ template_netbridge }} --serial0 socket --vga serial0"
+
+    - name: Import image
+      command: "qm importdisk {{ template_id }} {{ tempfolder.path }}/image.qcow2 {{ template_storage }} --format qcow2"
+
+    - name: Configure boot sequence
+      command: "qm set {{ template_id }} --scsihw virtio-scsi-pci --scsi0 {{ template_storage }}:vm-{{ template_id }}-disk-0 --boot c --bootdisk scsi0"
+
+    - name: Configure network
+      command: "qm set {{ template_id }} --ipconfig0 ip=dhcp"
+
+    - name: Configure cdrom
+      command: "qm set {{ template_id }} --ide2 {{ template_storage }}:cloudinit"
+
+    - name: Configure ssh key
+      command: "qm set {{ template_id }} --sshkey {{ ansible_env.HOME }}/.ssh/vm-{{ template_id }}-sshkey.pub"
+
+    - name: Configure cloud init
+      command: "qm set {{ template_id }} --citype nocloud"
+
+    - name: Resize image
+      command: "qm resize {{ template_id }} scsi0 +30G"
+
+    - name: Make template
+      command: "qm template {{ template_id }}"
+
+  when: config_result.rc > 0

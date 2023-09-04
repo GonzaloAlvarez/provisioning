@@ -1,0 +1,7 @@
+xcode_cli_only: True
+xcode_target_version: 12.4
+xcode_xip_location: /Users/{{ ansible_user }}/Xcode_{{ xcode_target_version }}.xip
+xcode_major_version: 9
+xcode_build: /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild
+xcode_packages_location: /Applications/Xcode.app/Contents/Resources/Packages
+xcode_xip_extraction_timeout: 1200

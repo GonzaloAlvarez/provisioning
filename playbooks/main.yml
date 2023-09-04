@@ -1,0 +1,100 @@
+---
+- hosts: proxmox
+  roles:
+    - { role: proxmox, become: true }
+
+- hosts: all
+  become: true
+  tasks:
+    - name: Update and upgrade packages
+      apt:
+        upgrade: full
+        update_cache: yes
+        autoremove: yes
+      retries: 5
+      delay: 5
+      register: result
+      until: result is not failed
+
+- hosts: all
+  roles:
+    - { role: bootstrap, become: true}
+    - { role: users, become: true }
+    - { role: geerlingguy.security, become: true }
+    - { role: dev-sec.ssh-hardening, become: true }
+    - { role: geerlingguy.git, become: true }
+    - { role: manala.vim, become: true }
+    - { role: dotfiles, become: false }
+    - { role: weareinteractive.ufw, become: true }
+
+- hosts: proxmox-vm
+  roles:
+    - { role: proxmox-vm, become: true }
+
+- hosts: aws_vm
+  roles:
+    - { role: aws_vm, become: true }
+
+- hosts: trusted
+  roles:
+    - { role: privatekeys, become: false }
+
+- hosts: vpn
+  roles:
+    - { role: wireguard, become: true }
+    - { role: nat, become: true }
+
+- hosts: devops
+  roles:
+    - { role: python, become: false}
+    - { role: geerlingguy.pip, become: true, pip_package: python3-pip }
+    - { role: geerlingguy.ansible, become: true}
+    - { role: secfigo.terraform, become: true }
+    - { role: infra, become: false}
+
+- hosts: baremetal
+  roles:
+    - { role: cockpit, become: true }
+
+- hosts: docker
+  roles:
+    - { role: geerlingguy.pip, become: true, pip_package: python3-pip }
+    - { role: ssl_selfsigned, become: true, cert_alt_path: '/opt/docker/ssl'}
+    - { role: geerlingguy.docker, become: true }
+
+- hosts: proxmox
+  roles:
+    - { role: proxmox-template, become: true }
+    - { role: ssl_selfsigned, become: true }
+    - { role: geerlingguy.nginx, become: true }
+
+- hosts: bitwarden
+  roles:
+    - { role: jenstimmerman.vaultwarden, become: true }
+    - { role: ssl_selfsigned, become: true }
+    - { role: geerlingguy.nginx, become: true }
+
+- hosts: homeassistant
+  roles:
+    - { role: home_assistant, become: true }
+    - { role: ssl_selfsigned, become: true }
+    - { role: geerlingguy.nginx, become: true }
+
+- hosts: development
+  roles:
+    - { role: cpp-dev, become: true }
+    - { role: clang, become: true }
+    - { role: naftulikay.rust-dev, become: true }
+    - { role: geerlingguy.java, become: true }
+    - { role: gantsign.golang, become: true }
+    - { role: geerlingguy.nodejs, become: true }
+    - { role: geerlingguy.ruby, become: true }
+    - { role: gantsign.maven, become: true }
+    - { role: secfigo.terraform, become: true }
+    - { role: do1jlr.gitea, become: true }
+    - { role: ssl_selfsigned, become: true }
+    - { role: geerlingguy.nginx, become: true }
+
+- hosts: laptop
+  roles:
+    - { role: laptop-mods, become: true }

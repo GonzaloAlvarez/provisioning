@@ -1,0 +1,34 @@
+- name: Set version specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+    - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+    - "default.yml"
+
+- name: Manage cockpit packages using platform specific package manager if applicable
+  include_tasks: "{{ item }}"
+  with_first_found:
+    - "setup-{{ ansible_pkg_mgr }}.yml"
+    - "setup-default.yml"
+
+- name: Define daemon as "{{ __cockpit_daemon }}"
+  set_fact:
+    cockpit_daemon: "{{ __cockpit_daemon }}"
+  when: cockpit_daemon is not defined
+
+- name: Configure reverse proxy folder
+  copy:
+    dest: /etc/cockpit/cockpit.conf
+    content: |
+      [WebService]
+      ProtocolHeader = X-Forwarded-Proto
+      UrlRoot=/{{ cockpit_revproxy_folder }}
+  when: cockpit_revproxy_folder|length > 0
+
+- name: Ensure Cockpit Web Console is started and enabled on boot.
+  service:
+    name: "{{ cockpit_daemon }}"
+    state: started
+    enabled: yes

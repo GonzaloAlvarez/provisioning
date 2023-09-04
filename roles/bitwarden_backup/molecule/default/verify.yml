@@ -1,0 +1,32 @@
+---
+- name: Verify role
+  hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      include_vars:
+        file: '../../defaults/main.yml'
+
+    - name: Setup
+      setup:
+
+    - name: Check if backup folder is not empty
+      stat:
+        path: '{{ backup_folder }}'
+      register: is_backup_folder
+
+    - name: Assert if backup folder exists
+      assert:
+        that: is_backup_folder.stat.exists and is_backup_folder.stat.isdir
+
+    - name: Check if there is a new backup file with the right name
+      stat:
+        path: "\
+          {{ backup_folder }}/bitwarden/bwrs-backup-\
+          {{ ansible_date_time.date }}-{{ ansible_date_time.hour }}.sql3"
+      register: is_backup_files
+
+    - name: Assert if backup folder has the right file
+      assert:
+        that: is_backup_files.stat.exists and is_backup_files.stat.size > 0

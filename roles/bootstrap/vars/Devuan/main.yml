@@ -1,0 +1,11 @@
+---
+
+# Hummm really?
+dbs_use_systemd: false
+
+dbs_apt_default_host: 'auto.mirror.devuan.org'
+dbs_repo_new:
+  - "http://{{ dbs_apt_default_host }}/merged {{ ansible_distribution_release }} {{ dbs_apt_components }}"
+  - "http://{{ dbs_apt_default_host }}/merged {{ ansible_distribution_release }}-updates {{ dbs_apt_components }}"
+  - "http://{{ dbs_apt_default_host }}/merged {{ ansible_distribution_release }}-security {{ dbs_apt_components }}"
+  - "http://{{ dbs_apt_default_host }}/merged {{ ansible_distribution_release }}-backports {{ dbs_apt_components }}"

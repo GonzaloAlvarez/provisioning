@@ -1,0 +1,30 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - debug:
+        msg: >-
+          Testing with Ansible
+          {{ ansible_version.full }} using Python
+          {{ ansible_facts.python_version }}
+          on {{ ansible_facts.distribution }}
+          {{ ansible_facts.distribution_version }}
+
+    - file:
+        path: '{{ backup_folder | dirname }}'
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+      changed_when: false
+
+    - file:
+        path: '{{ backup_folder }}'
+        state: touch
+        owner: root
+        group: root
+        mode: 0644
+      changed_when: false
+
+    - import_role:
+        name: restic_run

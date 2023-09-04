@@ -1,0 +1,26 @@
+---
+- name: Install build essential to compile packages
+  apt:
+    name: build-essential
+    update_cache: true
+    state: present
+
+- name: install required python modules (pre-install)
+  pip:
+    name: 'colorlog'
+    extra_args: "--upgrade"
+    executable: pip3.9
+
+- name: install defined version of Home Assistant
+  pip:
+    name: homeassistant
+    version: "{{ ha_version }}"
+    executable: pip3.9
+  when: ha_version is defined
+
+- name: install latest version of Home Assistant
+  pip:
+    name: homeassistant
+    extra_args: "--upgrade"
+    executable: pip3.9
+  when: ha_version is undefined

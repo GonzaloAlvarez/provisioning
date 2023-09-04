@@ -1,0 +1,3 @@
+---
+bitwarden_db_path: '/opt/bitwarden_rs/data/db.sqlite3'
+backup_folder: '/opt/backup'

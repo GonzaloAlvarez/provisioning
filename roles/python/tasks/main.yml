@@ -1,0 +1,68 @@
+---
+- name: Install prerequisites
+  register: pkgs_installed
+  become: yes
+  apt:
+    state: latest
+    update_cache: yes
+    pkg:
+      - build-essential
+      - zlib1g-dev
+      - libncurses5-dev
+      - libgdbm-dev
+      - libnss3-dev
+      - libssl-dev
+      - libreadline-dev
+      - libffi-dev
+      - libsqlite3-dev
+      - libbz2-dev
+
+- name: Download python 10
+  get_url:
+    url: https://www.python.org/ftp/python/3.10.5/Python-3.10.5.tgz
+    dest: /tmp/python.tgz
+
+- name: Unpack python 10
+  shell: tar -xzf /tmp/python.tgz
+  args:
+    chdir: /tmp
+
+- name: Configure python 10
+  command: ./configure --enable-optimizations 
+  args:
+    chdir: /tmp/Python-3.10.5
+
+- name: Build python
+  shell: make -j8 build_all
+  args:
+    chdir: /tmp/Python-3.10.5
+
+- name: Install python
+  shell: make -j8 altinstall
+  args:
+    chdir: /tmp/Python-3.10.5
+  become: yes
+
+- name: Get pip
+  get_url:
+    url: https://bootstrap.pypa.io/get-pip.py
+    dest: /tmp/get-pip.py
+
+- name: Install pip
+  command: /usr/local/bin/python3.10 /tmp/get-pip.py
+  become: yes
+
+- name: Install python3-apt
+  register: pkgs_installed
+  become: yes
+  apt:
+    state: latest
+    pkg: python3-apt
+
+- name: Remove Python 2
+  apt:
+    state: absent
+    force: yes
+    pkg:
+      - python2
+  become: yes

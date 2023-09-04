@@ -1,0 +1,20 @@
+---
+galaxy_info:
+  role_name: ssl_selfsigned
+  namespace: ssl_selfsigned
+  author: 'Gonzalo Alvarez'
+  description: SSL Self Signed Certificates
+  company: 'Gonzalo Alvarez'
+  license: 'Apache 2.0'
+  min_ansible_version: '2.7'
+
+  platforms:
+    - name: Debian
+      versions:
+        - 1-
+
+  galaxy_tags:
+    - system
+
+dependencies:
+  - python

@@ -1,0 +1,29 @@
+---
+- name: Switch main user
+  set_fact:
+    ansible_ssh_private_key_file: "{{ main_private_key_file }}"
+    ansible_user: "{{ main_user }}"
+    ansible_ssh_user: "{{ main_user }}"
+
+- name: Remove unnecessary users from the system
+  user:
+    name: "{{ user_item }}"
+    state: absent
+    remove: yes
+    force: yes
+  with_items: "{{ purge_users }}"
+  when: purge_users|length > 0 and user_item != ansible_user
+  tags: molecule-notest
+  loop_control:
+    loop_var: user_item
+
+- name: Remove connected user from the system, if required
+  user:
+    name: "{{ user_item }}"
+    state: absent
+    remove: yes
+    force: yes
+  with_items: "{{ purge_users }}"
+  when: purge_users|length > 0 and user_item == ansible_user
+  loop_control:
+    loop_var: user_item

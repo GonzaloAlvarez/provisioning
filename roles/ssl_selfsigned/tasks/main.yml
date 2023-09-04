@@ -1,0 +1,35 @@
+---
+- name: Register variable for SSL file name
+  set_fact:
+    host_cert_varfile: "{{ ssl_basepath | default(playbook_dir) }}/hosts/{{ provided_hostname | default(ansible_host) }}.yml"
+
+- name: Check if file exits
+  become: False
+  local_action: stat path={{ host_cert_varfile }}
+  register: certvarfile_exits_f
+
+- name: Register variable for SSL file name
+  set_fact:
+    host_cert_varfile: "{{ ssl_basepath | default(playbook_dir) }}/hosts/{{ provided_hostname | default(ansible_host) }}.lan.yml"
+  when: not certvarfile_exits_f.stat.exists
+
+- name: show file
+  debug:
+    msg: '{{ host_cert_varfile }}'
+
+- name: Check if file exits
+  become: False
+  local_action: stat path={{ host_cert_varfile }}
+  register: certvarfile_exits
+
+- name: Generate certificate locally
+  include_tasks: generate_ssl.yml
+  when: not certvarfile_exits.stat.exists
+
+- name: Use generated cert
+  include_tasks: existing_ssl.yml
+  when: certvarfile_exits.stat.exists
+
+- name: Copy generated files to another location
+  include_tasks: copy_ssl.yml
+  when: cert_alt_path is defined and cert_alt_path | length > 0

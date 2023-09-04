@@ -1,0 +1,22 @@
+---
+homebrew_install_packages:
+  - coreutils
+  - tmux
+  - moreutils
+  - python@3.9
+  - awscli
+  - vim
+  - bash
+
+homebrew_cask_install_packages:
+  - firefox
+  - vlc
+  - alfred
+  - zoom
+  - slack
+  - amazon-workspaces
+  - iterm2
+  - virtualbox
+  - vagrant
+  - caffeine
+

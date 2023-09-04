@@ -1,0 +1,37 @@
+---
+
+- name: INCLUDE | Some fixes
+  include: 000-fixes.yml
+
+- name: INCLUDE_VARS | OS
+  include_vars: "{{ ansible_distribution }}/main.yml"
+
+- name: INCLUDE_VARS | Related to OS version
+  include_vars: "{{ ansible_distribution }}/{{ ansible_distribution_release }}.yml"
+
+- name: INCLUDE | Prepare system
+  include: prepare.yml
+
+- name: INCLUDE | Configure APT
+  include: apt.yml
+
+- name: INCLUDE | Set hostname
+  include: hostname.yml
+  when: dbs_set_hostname and not dbs_is_docker
+
+- name: TIMEZONE | Set
+  timezone:
+    name: "{{ dbs_timezone }}"
+  when: dbs_set_timezone
+  notify: [ restart cron ]
+
+- name: INCLUDE | Manage locales
+  include: locale.yml
+  when: dbs_set_locale
+
+- name: INCLUDE | Install NTP damon
+  include: ntp.yml
+  when: dbs_set_ntp
+
+- name: INCLUDE | Misc system configuration
+  include: system.yml

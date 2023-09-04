@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  become: True
+  tasks:
+    - name: "Include proxmox"
+      include_role:
+        name: "proxmox"

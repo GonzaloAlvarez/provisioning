@@ -1,0 +1,22 @@
+---
+roles:
+  - name: geerlingguy.git
+  - name: dev-sec.ssh-hardening
+  - name: manala.vim
+  - name: geerlingguy.security
+  - name: geerlingguy.docker
+  - name: linux-system-roles.cockpit
+  - name: geerlingguy.pip
+  - name: geerlingguy.nginx
+  - name: weareinteractive.ufw
+  - name: jenstimmerman.vaultwarden
+  - name: naftulikay.rust-dev
+  - name: geerlingguy.java
+  - name: gantsign.golang
+  - name: geerlingguy.ruby
+  - name: geerlingguy.nodejs
+  - name: gantsign.maven
+  - name: secfigo.terraform
+  - name: mawalu.wireguard_private_networking
+  - name: geerlingguy.ansible
+  - name: do1jlr.gitea

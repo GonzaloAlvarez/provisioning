@@ -1,0 +1,7 @@
+---
+devtools_packages:
+  - build-essential
+  - m4
+  - libffi-dev
+  - python-dev
+  - libssl-dev

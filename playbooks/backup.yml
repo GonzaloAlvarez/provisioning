@@ -1,0 +1,9 @@
+---
+
+- hosts: bitwarden:&backup
+  roles:
+    - { role: bitwarden_backup, become: True}
+
+- hosts: backup
+  roles:
+    - { role: restic_run, become: True}

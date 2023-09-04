@@ -1,0 +1,14 @@
+---
+# Allow for keys to be propagated
+trust_system: true
+
+# false to disable Agent Forwarding. Set to true to allow Agent Forwarding.
+ssh_allow_agent_forwarding: true   # sshd
+
+# false to disable TCP Forwarding. Set to true to allow TCP Forwarding.
+ssh_allow_tcp_forwarding: 'yes'      # sshd
+
+# Allow SSH Tunnels
+ssh_permit_tunnel: true
+
+
