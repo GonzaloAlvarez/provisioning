@@ -39,7 +39,17 @@
       state: present
       update_cache: no
     register: ar
+    when: ansible_architecture != "aarch64"
     with_items: "{{ dbs_repo_new }}"
+
+  - name: APT_REPOSITORY | Add repositories
+    apt_repository:
+      repo: "deb {{ item }}"
+      state: present
+      update_cache: no
+    register: ar
+    when: ansible_architecture == "aarch64"
+    with_items: "{{ dbs_repo_new_aarch64 }}"
 
   - name: APT_REPOSITORY | Add src repositories
     apt_repository:
