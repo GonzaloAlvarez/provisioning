@@ -14,11 +14,15 @@ $PYTHON virtualenv.pyz venv
 source venv/bin/activate
 pip install --upgrade pip setuptools wheel
 pip install ansible
-pip install dulwich --config-settings "--build-option=--pure"
-$PYTHON - <<'____HERE'
+if [ -d "$HOME/provisioning" ]; then
+    cp -Rv "$HOME/provisioning" .
+else
+    pip install dulwich --config-settings "--build-option=--pure"
+    $PYTHON - <<'____HERE'
 from dulwich import porcelain
 porcelain.clone('https://github.com/GonzaloAlvarez/provisioning', 'provisioning')
 ____HERE
+fi
 cd provisioning
 ansible-galaxy install -r requirements.yml
 ansible-playbook --connection=local --inventory=localhost --limit 127.0.0.1 playbooks/main.yml
