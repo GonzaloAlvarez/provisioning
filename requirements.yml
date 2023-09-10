@@ -1,7 +1,8 @@
 ---
+collections:
+  - name: devsec.hardening
 roles:
   - name: geerlingguy.git
-  - name: dev-sec.ssh-hardening
   - name: manala.vim
   - name: geerlingguy.security
   - name: geerlingguy.docker
