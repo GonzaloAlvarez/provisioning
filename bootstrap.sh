@@ -6,7 +6,7 @@ source venv/bin/activate
 python -m pip install --upgrade pip setuptools wheel
 [[ -d "$HOME/provisioning" ]] || python -m pip install dulwich --config-settings "--build-option=--pure"
 [[ -d "$HOME/provisioning" ]] || python -c "from dulwich import porcelain;porcelain.clone('https://github.com/GonzaloAlvarez/provisioning', 'provisioning')"
-cp -Rv "$HOME/provisioning" . && cd provisioning
+cp -Rv "$HOME/provisioning" .; cd provisioning
 python -m pip install ansible
 ansible-galaxy install -r requirements.yml
 ansible-playbook --connection=local --inventory=localhost --limit 127.0.0.1 playbooks/main.yml
