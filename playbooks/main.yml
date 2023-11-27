@@ -21,7 +21,6 @@
     - { role: bootstrap, become: true}
     - { role: users, become: true }
     - { role: geerlingguy.security, become: true }
-    - { role: devsec.hardening.ssh_hardening, become: true }
     - { role: geerlingguy.git, become: true }
     - { role: manala.vim, become: true }
     - { role: dotfiles, become: false }
