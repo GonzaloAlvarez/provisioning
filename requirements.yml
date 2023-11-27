@@ -18,6 +18,5 @@ roles:
   - name: geerlingguy.nodejs
   - name: gantsign.maven
   - name: secfigo.terraform
-  - name: mawalu.wireguard_private_networking
   - name: geerlingguy.ansible
   - name: do1jlr.gitea
