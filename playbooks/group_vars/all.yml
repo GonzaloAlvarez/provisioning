@@ -38,3 +38,5 @@ infra_basepath: "{{ inventory_dir }}/.."
 ssl_basepath: "{{ infra_basepath }}/security"
 
 rust_user: gonzalo
+
+ssh_permit_tunnel: no
