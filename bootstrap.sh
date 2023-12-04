@@ -1,6 +1,6 @@
 #!/bin/bash
 mkdir -p "$HOME/.bootstrap" && cd "$_"
-$(command -v wget) -q -o virtualenv.pyz "https://bootstrap.pypa.io/virtualenv.pyz" || $(command -v curl) -O "https://bootstrap.pypa.io/virtualenv.pyz" || exit 1
+$(command -v wget) -q "https://bootstrap.pypa.io/virtualenv.pyz" || $(command -v curl) -O "https://bootstrap.pypa.io/virtualenv.pyz" || exit 1
 $(command -v python3 || command -v python) virtualenv.pyz venv || exit 1
 source venv/bin/activate
 python -m pip install --upgrade pip setuptools wheel
