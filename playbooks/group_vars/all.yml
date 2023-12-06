@@ -1,6 +1,6 @@
 ---
 # Timezone
-dbs_timezone: "US/Pacific"
+dbs_timezone: "America/Los_Angeles"
 
 # Uninstall unneeded packages
 dbs_uninstall_packages:
