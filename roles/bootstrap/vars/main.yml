@@ -17,7 +17,6 @@ dbs_packages:
   - screen
   - sudo
   - unzip
-  - python-setuptools
   - python3-pip
   - python3-setuptools
 
