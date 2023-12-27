@@ -1,6 +1,5 @@
 dbs_packages:
   - apt-transport-https
-  - aptitude
   - binutils
   - curl
   - debconf-utils
