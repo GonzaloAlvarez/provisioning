@@ -1,6 +1,7 @@
 dbs_packages:
   - apt-transport-https
   - binutils
+  - cron
   - curl
   - debconf-utils
   - debian-goodies
